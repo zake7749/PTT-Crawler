@@ -91,7 +91,7 @@ class PttCrawler(object):
         with open(filename+".json", 'w') as op:
             op.write(json.dumps(data, indent=4, ensure_ascii=False).encode('utf-8'))
 
-    def crawl(self, board="Gossiping", start=1, end=2):
+    def crawl(self, board="Gossiping", start=1, end=2, sleep_time=0.5):
 
         crawl_range = range(start,end)
 
@@ -100,7 +100,7 @@ class PttCrawler(object):
             res = []
             for article in self.articles(page):
                 res.append(self.parse_article(article))
-                time.sleep(0.5)
+                time.sleep(sleep_time)
             self.output(board + str(start), res)
 
             print(u"已經完成 %s 頁面第 %d 頁的爬取" %(board,start))
