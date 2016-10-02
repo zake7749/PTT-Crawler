@@ -1,8 +1,8 @@
 # PTT Crawler
 
-一個用於練習 BeautifulSoap 的小實驗，
+一個用於練習 BeautifulSoap 的小實驗
 
-## Example
+## 使用方式
 
 ```python
     crawler = PttCrawler()
@@ -14,7 +14,17 @@
 	crawler.crawl(board="Gossiping", start=90, end=101)
 ```
 
-## Data format
+## 環境配置
+
+需要配置好`bs4`、`requests`與`lxml`
+
+```
+pip install bs4
+pip install requests
+pip install lxml
+```
+
+## 資料格式
 
 每爬完一整頁的所有文章就會進行一次輸出，檔案格式為 json :
 
