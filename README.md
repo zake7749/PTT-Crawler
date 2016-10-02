@@ -1,7 +1,5 @@
 # PTT Crawler
 
-一個用於練習 BeautifulSoap 的小實驗
-
 ## 使用方式
 
 ```python
