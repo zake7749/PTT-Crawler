@@ -29,7 +29,6 @@ pip install lxml
 每爬完一整頁的所有文章就會進行一次輸出，檔案格式為 json :
 
 ```json
-[
     {
         "content": "文章內容",
         "responses": [
@@ -38,8 +37,7 @@ pip install lxml
                 "vote": "推文立場(箭頭、推、噓)", 
                 "user": "推文 ID"
             }
-        ], ...
+        ],
         "title": "文章標題"
-    }, ...    
-]
+    }
 ```
