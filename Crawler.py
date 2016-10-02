@@ -10,7 +10,7 @@ from bs4.element import NavigableString
 def main():
 
     crawler = PttCrawler()
-    crawler.crawl(board="Gossiping", start=66, end=100)
+    crawler.crawl(board="Gossiping", start=73, end=100)
 
     #res = crawler.parse_article("https://www.ptt.cc/bbs/Gossiping/M.1119928928.A.78A.html")
     #crawler.output("test", res)
@@ -27,6 +27,7 @@ class PttCrawler(object):
 
     def __init__(self):
         self.session = requests.session()
+        requests.packages.urllib3.disable_warnings()
         self.session.post("https://www.ptt.cc/ask/over18",
                            verify=False,
                            data=self.gossip_data)
@@ -54,18 +55,17 @@ class PttCrawler(object):
         raw  = self.session.get(url, verify=False)
         soup = BeautifulSoup(raw.text, "lxml")
 
-        article = {}
-        article["title"]   = soup.select(".article-meta-value")[2].contents[0]
-
-        content = ""
-        for tag in soup.select("#main-content")[0]:
-            if type(tag) is NavigableString and tag !='\n':
-                content += tag
-                break
-        article["content"] = content
-
-
         try:
+            article = {}
+            article["title"]   = soup.select(".article-meta-value")[2].contents[0]
+
+            content = ""
+            for tag in soup.select("#main-content")[0]:
+                if type(tag) is NavigableString and tag !='\n':
+                    content += tag
+                    break
+            article["content"] = content
+
             response_list = []
             for response_struct in soup.select(".push"):
 
@@ -82,7 +82,7 @@ class PttCrawler(object):
             article["responses"] = response_list
         except Exception as e:
             print(e)
-            print("在分析 %s 時出現錯誤" % url)
+            print(u"在分析 %s 時出現錯誤" % url)
 
         return article
 
