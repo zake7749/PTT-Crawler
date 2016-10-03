@@ -1,6 +1,6 @@
 # PTT Crawler
 
-一個練習網路爬蟲的小實驗，會取出 PTT 文章的標題、內容與推文。
+一個練習網路爬蟲的小實驗，可以取出 PTT 文章中標題、內容與推文。
 
 ## 使用方式
 
@@ -16,7 +16,7 @@
 
 ## 環境配置
 
-需要配置好`bs4`、`requests`與`lxml`
+主要基於 python2.7，開發，另外需配置好`bs4`、`requests`與`lxml`：
 
 ```terminal
 pip install bs4
@@ -26,18 +26,22 @@ pip install lxml
 
 ## 資料格式
 
-每爬完一整頁的所有文章就會進行一次輸出，檔案格式為 json :
+每爬完一整頁就會進行一次輸出，檔案格式為`json`:
 
 ```json
-    {
-        "content": "文章內容",
-        "responses": [
-            {
-                "content": "推文內容", 
-                "vote": "推文立場(箭頭、推、噓)", 
-                "user": "推文 ID"
-            }
-        ],
-        "title": "文章標題"
-    }
+{
+    "Content": "文章內容",
+    "Responses": [
+        {
+            "Content": "推文內容", 
+            "Vote": "推文立場(箭頭、推、噓)", 
+            "User": "推文 ID"
+        }
+    ],
+    "Title": "文章標題",
+    "Author": "文章作者",
+    "UpVote": 推文總數,
+    "NoVote": 箭頭總數,
+    "DownVote": 噓文總數
+}
 ```
