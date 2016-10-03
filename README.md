@@ -28,7 +28,7 @@ pip install lxml
 
 每爬完一整頁就會進行一次輸出，檔案格式為`json`:
 
-```json
+```
 {
     "Content": "文章內容",
     "Responses": [
