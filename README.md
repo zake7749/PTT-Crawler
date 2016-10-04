@@ -4,14 +4,25 @@
 
 ## 使用方式
 
+### 批量爬取
 ```python
-    crawler = PttCrawler()
-    crawler.crawl(board="欲爬取的看版名稱", start=StartIndex, end=EndIndex)
+crawler = PttCrawler()
+crawler.crawl(board="欲爬取的看版名稱", start=StartIndex, end=EndIndex)
 ```
 `start` 表示想從哪一頁開始爬取，`end` 則是爬到哪一頁時會停止，比方說想爬取八卦版的 90 ~ 100 頁，可以設定為：
 
 ```python
 	crawler.crawl(board="Gossiping", start=90, end=101)
+```
+
+### 單一頁面爬取
+
+透過調用 `crawler.parse_article(url)` 可以爬取單一頁面，回傳值為包含文章資訊的`dictionary`
+
+```python
+crawler = PttCrawler()
+result = crawler.parse_article("https://www.ptt.cc/bbs/Gossiping/M.1475542702.A.46A.html")
+crawler.output("output_file_name", result)
 ```
 
 ## 環境配置
