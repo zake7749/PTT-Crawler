@@ -12,7 +12,7 @@ crawler.crawl(board="欲爬取的看版名稱", start=StartIndex, end=EndIndex)
 `start` 表示想從哪一頁開始爬取，`end` 則是爬到哪一頁時會停止，比方說想爬取八卦版的 90 ~ 100 頁，可以設定為：
 
 ```python
-	crawler.crawl(board="Gossiping", start=90, end=101)
+crawler.crawl(board="Gossiping", start=90, end=101)
 ```
 
 ### 單一頁面爬取
