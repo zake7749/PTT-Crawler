@@ -10,7 +10,7 @@ from bs4.element import NavigableString
 def main():
 
     crawler = PttCrawler()
-    crawler.crawl(board="Gossiping", start=101, end=111)
+    crawler.crawl(board="Gossiping", start=10001, end=11000)
 
     #res = crawler.parse_article("https://www.ptt.cc/bbs/Gossiping/M.1119928928.A.78A.html")
     #crawler.output("test", res)
@@ -38,7 +38,10 @@ class PttCrawler(object):
         soup = BeautifulSoup(res.text, "lxml")
 
         for article in soup.select(".r-ent"):
-            yield self.main + article.select(".title")[0].select("a")[0].get("href")
+            try:
+                yield self.main + article.select(".title")[0].select("a")[0].get("href")
+            except:
+                pass # (本文已被刪除)
 
     def pages(self, board=None, index_range=None, output_dir="result/"):
 
