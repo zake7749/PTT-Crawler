@@ -9,7 +9,7 @@ def main():
 
     if len(argv) == 2:
         result = crawler.parse_article(argv[1])
-        crawler.output(argv[1], result)
+        crawler.output("result", result)
 
     elif len(argv) == 4:
         crawler.crawl(board=argv[1], start=int(argv[2]), end=int(argv[3]))
