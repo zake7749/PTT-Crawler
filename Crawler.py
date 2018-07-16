@@ -16,7 +16,7 @@ def main():
     #crawler.output("test", res)
 
 
-class PttCrawler(object):
+class PttCrawler:
 
     root = "https://www.ptt.cc/bbs/"
     main = "https://www.ptt.cc"
@@ -33,8 +33,14 @@ class PttCrawler(object):
                            data=self.gossip_data)
 
     def articles(self, page):
+        '''文章內容的生成器
+        Args:
+            page: 頁面網址
+        Returns:
+            文章內容的生成器
+        '''
 
-        res  = self.session.get(page,verify=False)
+        res  = self.session.get(page, verify=False)
         soup = BeautifulSoup(res.text, "lxml")
 
         for article in soup.select(".r-ent"):
@@ -43,8 +49,15 @@ class PttCrawler(object):
             except:
                 pass # (本文已被刪除)
 
-    def pages(self, board=None, index_range=None, output_dir="result/"):
-
+    def pages(self, board=None, index_range=None):
+        '''頁面網址的生成器
+        Args:
+            board: 看板名稱
+            index_range: 文章頁數範圍
+        Returns:
+            網址的生成器
+        '''
+        
         target_page = self.root + board + "/index"
 
         if range is None:
@@ -53,7 +66,27 @@ class PttCrawler(object):
             for index in index_range:
                 yield target_page + str(index) + ".html"
 
-    def parse_article(self, url):
+    def parse_article(self, url, mode):
+        '''解析爬取的文章，整理進dict
+        Args:
+            url: 欲爬取的PTT頁面網址
+            mode: 欲爬取回文的模式。全部(all)、推文(up)、噓文(down)、純回文(normal)
+        Returns:
+            article: 爬取文章後資料的dict
+            
+        '''
+        
+        # 處理mode標誌
+        if mode == 'all':
+            mode = 'all'
+        elif mode == 'up':
+            mode = u'推'
+        elif mode == 'down':
+            mode = u'噓'
+        elif mode == 'normal':
+            mode = '→'
+        else:
+            raise ValueError("mode變數錯誤", mode)
 
         raw  = self.session.get(url, verify=False)
         soup = BeautifulSoup(raw.text, "lxml")
@@ -85,17 +118,34 @@ class PttCrawler(object):
                 if "warning-box" not in response_struct['class']:
 
                     response_dic = {}
-                    response_dic["Content"] = response_struct.select(".push-content")[0].contents[0][1:]
-                    response_dic["Vote"]  = response_struct.select(".push-tag")[0].contents[0][0]
-                    response_dic["User"]  = response_struct.select(".push-userid")[0].contents[0]
-                    response_list.append(response_dic)
-
-                    if response_dic["Vote"] == u"推":
-                        upvote += 1
-                    elif response_dic["Vote"] == u"噓":
-                        downvote += 1
+                    
+                    # 根據不同的mode去採集response
+                    if mode == 'all':
+                        response_dic["Content"] = response_struct.select(".push-content")[0].contents[0][1:]
+                        response_dic["Vote"]  = response_struct.select(".push-tag")[0].contents[0][0]
+                        response_dic["User"]  = response_struct.select(".push-userid")[0].contents[0]
+                        response_list.append(response_dic)
+                        
+                        if response_dic["Vote"] == u"推":
+                            upvote += 1
+                        elif response_dic["Vote"] == u"噓":
+                            downvote += 1
+                        else:
+                            novote += 1
                     else:
-                        novote += 1
+                        response_dic["Content"] = response_struct.select(".push-content")[0].contents[0][1:]
+                        response_dic["Vote"]  = response_struct.select(".push-tag")[0].contents[0][0]
+                        response_dic["User"]  = response_struct.select(".push-userid")[0].contents[0]
+
+                        if response_dic["Vote"] == mode:
+                            response_list.append(response_dic)
+                            
+                            if mode == u"推":
+                                upvote += 1
+                            elif mode == u"噓":
+                                downvote += 1
+                            else:
+                                novote += 1
 
             article["Responses"] = response_list
             article["UpVote"] = upvote
@@ -109,23 +159,42 @@ class PttCrawler(object):
         return article
 
     def output(self, filename, data):
+        '''爬取完的資料寫到json文件
+        Args:
+            filename: json檔的文件路徑
+            data: 爬取完的資料
+        '''
+        
+        try:
+            with open(filename+".json", 'wb+') as op:
+                op.write(json.dumps(data, indent=4, ensure_ascii=False).encode('utf-8'))
+                print('爬取完成~', filename + '.json', '輸出成功！')
+        except Exception as err:
+            print(filename + '.json', '輸出失敗 :(')
+            print('error message:', err)
+        
+    def crawl(self, board="Gossiping", mode='all', start=1, end=2, sleep_time=0.5):
+        '''爬取資料主要接口
+        Args:
+            board: 欲爬取的看版名稱
+            mode: 欲爬取回文的模式。全部(all)、推文(up)、噓文(down)、純回文(normal)
+            start: 從哪一頁開始爬取
+            end: 爬取到哪一頁停止
+            sleep_time: sleep間隔時間
+        '''
 
-        with open(filename+".json", 'w') as op:
-            op.write(json.dumps(data, indent=4, ensure_ascii=False).encode('utf-8'))
-
-    def crawl(self, board="Gossiping", start=1, end=2, sleep_time=0.5):
-
-        crawl_range = range(start,end)
-
+        crawl_range = range(start, end)
 
         for page in self.pages(board, crawl_range):
             res = []
+            
             for article in self.articles(page):
-                res.append(self.parse_article(article))
+                res.append(self.parse_article(article, mode))
                 time.sleep(sleep_time)
+            
+            print(u"已經完成 %s 頁面第 %d 頁的爬取" %(board, start))
             self.output(board + str(start), res)
-
-            print(u"已經完成 %s 頁面第 %d 頁的爬取" %(board,start))
+            
             start += 1
 
 
