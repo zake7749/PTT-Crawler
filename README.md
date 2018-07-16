@@ -27,7 +27,7 @@ crawler.output("output_file_name", result)
 
 ### 指定模式爬取
 
-設定參數`mode`，可以指定想要爬取的是**推文(up)**、**噓文(down)**、**一般回文(normal)** 或 **不指定(all)**
+設定參數`mode` (default all)，可以指定想要爬取的是**推文(up)**、**噓文(down)**、**一般回文(normal)** 或 **不指定(all)**
 
 ~~~python
 mode = 'up' # 只爬取文章內的推文
