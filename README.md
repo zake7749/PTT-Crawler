@@ -25,9 +25,24 @@ result = crawler.parse_article("https://www.ptt.cc/bbs/Gossiping/M.1475542702.A.
 crawler.output("output_file_name", result)
 ```
 
+### 指定模式爬取
+
+設定參數`mode` (default all)，可以指定想要爬取的是**推文(up)**、**噓文(down)**、**一般回文(normal)** 或 **不指定(all)**
+
+~~~python
+mode = 'up' # 只爬取文章內的推文
+
+# 批量爬取
+crawler.crawl(board="Gossiping", start=90, end=101, mode=mode)
+
+# 單一頁面爬取
+result = crawler.parse_article("https://www.ptt.cc/bbs/Gossiping/M.1475542702.A.46A.html", mode)
+crawler.output("output_file_name", result)
+~~~
+
 ## 環境配置
 
-主要基於 python2.7，開發，另外需配置好`bs4`、`requests`與`lxml`：
+主要基於 python2.7 (支援2.7以上版本)，開發，另外需配置好`bs4`、`requests`與`lxml`：
 
 ```terminal
 pip install bs4

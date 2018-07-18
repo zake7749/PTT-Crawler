@@ -6,13 +6,16 @@ from Crawler import PttCrawler
 def main():
 
     crawler = PttCrawler()
+    mode = 'up' # 只爬推文
 
-    if len(argv) == 2:
-        result = crawler.parse_article(argv[1])
+    if len(argv) == 3:
+        mode = argv[2]
+        result = crawler.parse_article(argv[1], mode)
         crawler.output("result", result)
 
-    elif len(argv) == 4:
-        crawler.crawl(board=argv[1], start=int(argv[2]), end=int(argv[3]))
+    elif len(argv) == 5:
+        mode = argv[4]
+        crawler.crawl(board=argv[1], start=int(argv[2]), end=int(argv[3]), mode=argv[4])
 
     else:
         print("使用方式有兩種：")
